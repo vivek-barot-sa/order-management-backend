@@ -12,6 +12,26 @@ mongoose.connect("mongodb://localhost:27017/orderDb", { useNewUrlParser: true },
     }
 });
 
+function verifyToken(req, res, next) {
+    if (!req.headers.authorization) {
+        return res.status(401).send('Unauthorized Request.');
+    }
+    let token = req.headers.authorization.split(' ')[1];
+    if (token === 'null') {
+        return res.status(401).send('Unauthorized Request.');
+    }
+    try {
+        let payload = jwt.verify(token, 'secretKey');
+        if (!payload) {
+            return res.status(401).send('Unauthorized Request.');
+        }
+        req.userId = payload.subject;
+        next();
+    } catch (error) {
+        return res.status(401).send("Unauthorized Request.");
+    }
+}
+
 router.get('/', (req, res) => {
     res.send('From API route.');
 });
@@ -47,7 +67,7 @@ router.post('/login', (req, res) => {
                     let payload = { subject: user._id }
                     let token = jwt.sign(payload, 'secretKey');
                     // res.status(200).send(user);
-                    res.status(200).send({ token });
+                    res.status(200).send({ token: token, role: user.role, uname: user.name });
                 }
             }
         }
@@ -71,7 +91,7 @@ router.get('/events', (req, res) => {
     res.json(events);
 });
 
-router.get('/specialevents', (req, res) => {
+router.get('/specialevents', verifyToken, (req, res) => {
     let events = [{
             "_id": "1",
             "name": "Special_Auto Expo",
