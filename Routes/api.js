@@ -45,7 +45,6 @@ router.post('/register', (req, res) => {
         } else {
             let payload = { subject: registeredUser._id }
             let token = jwt.sign(payload, 'secretKey');
-            // res.status(200).send(registeredUser);
             res.status(200).send({ token });
         }
     });
@@ -66,7 +65,6 @@ router.post('/login', (req, res) => {
                 } else {
                     let payload = { subject: user._id }
                     let token = jwt.sign(payload, 'secretKey');
-                    // res.status(200).send(user);
                     res.status(200).send({ token: token, role: user.role, uname: user.name });
                 }
             }
