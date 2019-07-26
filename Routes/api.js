@@ -4,6 +4,7 @@ const User = require('../Models/user');
 const jwt = require('jsonwebtoken');
 
 const mongoose = require('mongoose');
+
 mongoose.connect("mongodb://localhost:27017/orderDb", { useNewUrlParser: true }, err => {
     if (err) {
         console.error("Error!" + err);
@@ -21,7 +22,7 @@ function verifyToken(req, res, next) {
         return res.status(401).send('Unauthorized Request.');
     }
     try {
-        let payload = jwt.verify(token, 'secretKey');
+        let payload = jwt.verify(token, 'vivek');
         if (!payload) {
             return res.status(401).send('Unauthorized Request.');
         }
@@ -44,7 +45,7 @@ router.post('/register', (req, res) => {
             console.log(error);
         } else {
             let payload = { subject: registeredUser._id }
-            let token = jwt.sign(payload, 'secretKey');
+            let token = jwt.sign(payload, 'vivek');
             res.status(200).send({ token });
         }
     });
@@ -64,8 +65,8 @@ router.post('/login', (req, res) => {
                     res.status(401).send('Invalid password.');
                 } else {
                     let payload = { subject: user._id }
-                    let token = jwt.sign(payload, 'secretKey');
-                    res.status(200).send({ token: token, role: user.role, uname: user.name });
+                    let token = jwt.sign(payload, 'vivek');
+                    res.status(200).send({ token: token, uid: user._id, uname: user.name, uaddress: user.address, upincode: user.pincode, uemail: user.email, urole: user.role });
                 }
             }
         }
@@ -104,6 +105,17 @@ router.get('/specialevents', verifyToken, (req, res) => {
         }
     ];
     res.json(events);
+});
+
+router.put('/updateprofile', (req, res) => {
+    let data = req.body;
+    User.updateOne({ _id: data.id }, { $set: data }, (err, UpdatedUser) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.status(200).send(UpdatedUser);
+        }
+    });
 });
 
 module.exports = router;
