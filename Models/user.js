@@ -8,7 +8,8 @@ const userSchema = new Schema({
     pincode: Number,
     email: String,
     password: String,
-    role: String
+    role: String,
+    uniqId: Number
 });
 
 module.exports = mongoose.model('user', userSchema, 'users');
