@@ -44,9 +44,9 @@ router.post('/register', (req, res) => {
         if (error) {
             console.log(error);
         } else {
-            let payload = { subject: registeredUser._id }
-            let token = jwt.sign(payload, 'vivek');
-            res.status(200).send({ token });
+            // let payload = { subject: registeredUser._id }
+            // let token = jwt.sign(payload, 'vivek');
+            res.status(200).send({ registeredUser });
         }
     });
 });
