@@ -107,7 +107,24 @@ router.get('/specialevents', verifyToken, (req, res) => {
     res.json(events);
 });
 
-router.put('/updateprofile', (req, res) => {
+router.post('/searchcustomer', verifyToken, (req, res) => {
+    let userData = req.body.uniqId;
+    console.log(userData);
+    console.log(req.body);
+    User.findOne({ uniqId: userData }, (error, user) => {
+        if (error) {
+            console.log(error);
+        } else {
+            if (!user) {
+                res.status(401).send('Invalid Id.');
+            } else {
+                res.status(200).send(user);
+            }
+        }
+    });
+});
+
+router.put('/updateprofile', verifyToken, (req, res) => {
     let data = req.body;
     User.updateOne({ _id: data.id }, { $set: data }, (err, UpdatedUser) => {
         if (err) {
