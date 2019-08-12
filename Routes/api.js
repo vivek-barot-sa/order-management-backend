@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../Models/user');
+const User = require('../Models/user/user');
+const Offer = require('../Models/offer/offer');
 const jwt = require('jsonwebtoken');
 
 const mongoose = require('mongoose');
@@ -44,8 +45,6 @@ router.post('/register', (req, res) => {
         if (error) {
             console.log(error);
         } else {
-            // let payload = { subject: registeredUser._id }
-            // let token = jwt.sign(payload, 'vivek');
             res.status(200).send({ registeredUser });
         }
     });
@@ -73,21 +72,16 @@ router.post('/login', (req, res) => {
     });
 });
 
-router.get('/events', (req, res) => {
-    let events = [{
-            "_id": "1",
-            "name": "Auto Expo",
-            "description": "Lorem ipsum",
-            "date": "2012-04-23"
-        },
-        {
-            "_id": "2",
-            "name": "Auto Expo_2",
-            "description": "Lorem ipsum_2",
-            "date": "2012-04-24"
+router.post('/offer', (req, res) => {
+    let offerData = req.body;
+    let offer = new Offer(offerData);
+    offer.save((error, addedOffer) => {
+        if (error) {
+            console.log(error);
+        } else {
+            res.status(200).send({ addedOffer });
         }
-    ];
-    res.json(events);
+    });
 });
 
 router.get('/specialevents', verifyToken, (req, res) => {
